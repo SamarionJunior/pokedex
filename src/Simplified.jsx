@@ -53,9 +53,9 @@ const Simplified = () => {
     
     const comparator = (prop) => (itemA, itemB) => {
     
-        if(itemA[prop].includes(pokemonNameSearch) > itemB[prop].includes(pokemonNameSearch)) return -1
+        if(itemA[prop].toLowerCase().includes(pokemonNameSearch) > itemB[prop].toLowerCase().includes(pokemonNameSearch)) return -1
     
-        if(itemA[prop].includes(pokemonNameSearch) < itemB[prop].includes(pokemonNameSearch)) return 1
+        if(itemA[prop].toLowerCase().includes(pokemonNameSearch) < itemB[prop].toLowerCase().includes(pokemonNameSearch)) return 1
     
         return 0;
     
@@ -83,7 +83,7 @@ const Simplified = () => {
         if(isEmpty(pokemons) && isEmpty(pokemonNameSearch)){
             const filterPokemons = pokemons?.filter(pokemon => {
                 if(
-                    pokemonNameSearch.split("").every(elemento => pokemon.name.includes(elemento))
+                    pokemonNameSearch.split("").every(elemento => pokemon.name.toLowerCase().includes(elemento))
                     // pokemon.name.includes(pokemonNameSearch)
                 ){
                     return ({[pokemon.name]: pokemons})
@@ -147,7 +147,7 @@ const Simplified = () => {
 
     const inputTextSearchPokemon = (event) => {
         event.preventDefault()
-        const pokemonNameForSearch = String(event.target.value)
+        const pokemonNameForSearch = String(event.target.value).toLowerCase()
         setPokemonNameSearch(pokemonNameForSearch)
     }
 
