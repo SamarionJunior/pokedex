@@ -1,9 +1,25 @@
+
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 
 import axios from "axios";
 
 const baseURL = "https://pokeapi.co/api/v2/pokemon?limit=151&offset=0";
+
+// const sortPokemon = (pokemons) => {
+//     return pokemons
+//         .sort(comparator("name"))
+// }
+
+// const comparator = (prop) => (itemA, itemB) => {
+
+//     if(itemA[prop] > itemB[prop]) return 1
+
+//     if(itemA[prop] < itemB[prop]) return -1
+
+//     return 0;
+
+// }
 
 const isEmpty = value => {
     if(typeof value === 'undefined' || value ==="" || value == null || value === null || value === undefined || value === undefined){
@@ -24,41 +40,26 @@ const isEmpty = value => {
     return true
 }
 
-const comparator = (prop) => (itemA, itemB) => {
-
-    if(itemA[prop] > itemB[prop]) return 1
-
-    if(itemA[prop] < itemB[prop]) return -1
-
-    return 0;
-
-}
-
-const searchLocation = async (url) => 
-    await axios
-        .get(url)
-        .then((response) => {
-            const localizacoes = response.data
-            if(isEmpty(localizacoes)){
-                return localizacoes.map(location => 
-                    location.location_area.name
-                )
-            }
-        })
-
-const assignment = (value, another) => {
-    if(isEmpty(value)){
-        return value
-    } else {
-        return another
-    }
-}
-
 const Simplified = () => {
 
     const [pokemons, setPokemons] = useState()
 
     const [loading, setLoading] = useState(false)
+
+    const sortPokemon = (pokemons) => {
+        return pokemons
+            .sort(comparator("name"))
+    }
+    
+    const comparator = (prop) => (itemA, itemB) => {
+    
+        if(itemA[prop].includes(pokemonNameSearch) > itemB[prop].includes(pokemonNameSearch)) return -1
+    
+        if(itemA[prop].includes(pokemonNameSearch) < itemB[prop].includes(pokemonNameSearch)) return 1
+    
+        return 0;
+    
+    }
 
     const getlistOfPokemonNamesAndURLs = async () => {
         return await axios
@@ -78,32 +79,13 @@ const Simplified = () => {
         )
     }
 
-    // const sortPokemon = (pokemons) => {
-    //     return pokemons
-    //         .sort(comparator("id"))
-    // }
-
-    // const objectPokemon = (pokemons) => {
-    //     if(isEmpty(pokemons)){
-    //         pokemons.unshift({})
-    //         return pokemons
-    //             .reduce((objectPokemons, pokemon) => {
-    //                 return ({...objectPokemons, [pokemon.name]: pokemon})
-    //             })
-    //     }
-    // }
-
-    const arrayPokemon = (pokemons) => {
-        if(isEmpty(pokemons)){
-            return Object.keys(pokemons)?.map(key => pokemons[key])
-        }
-        return []
-    }
-
     const filterPokemon = (pokemons) => {
         if(isEmpty(pokemons) && isEmpty(pokemonNameSearch)){
             const filterPokemons = pokemons?.filter(pokemon => {
-                if(pokemon.name.includes(pokemonNameSearch)){
+                if(
+                    pokemonNameSearch.split("").every(elemento => pokemon.name.includes(elemento))
+                    // pokemon.name.includes(pokemonNameSearch)
+                ){
                     return ({[pokemon.name]: pokemons})
                 }
                 return false
@@ -150,21 +132,17 @@ const Simplified = () => {
 
     const [pokemonNameSearch, setPokemonNameSearch] = useState("")
 
-    // useEffect(() => {
-    //     if(ref.current["filter"] !== null){
+    useEffect(() => {
+        if(ref.current["filter"] !== null){
 
-    //         const newPokemons = new Object(pokemons)
-            
-    //         const arrayPokemons = arrayPokemon(newPokemons)
+            const filterPokemons = filterPokemon(pokemons)
 
-    //         const filterPokemons = filterPokemon(arrayPokemons)
-
-    //         const objectPokemons = objectPokemon(filterPokemons)
+            const sortPokemons = sortPokemon(filterPokemons)
     
-    //         setList(objectPokemons)
-    //     }
-    //     ref.current["filter"] = true
-    // }, [pokemonNameSearch])
+            setList(sortPokemons)
+        }
+        ref.current["filter"] = true
+    }, [pokemonNameSearch])
 
 
     const inputTextSearchPokemon = (event) => {
@@ -179,14 +157,10 @@ const Simplified = () => {
         }
     }
 
-    useEffect(() => {
-        console.log(loading)
-    }, [loading])
-
     return (
         <>
 
-            {/* <div className="row">
+            <div className="row">
                 <div className="col-12">
                     <nav className="navbar navbar-expand-lg py-4">
                         <div className="container-fluid gx-0">
@@ -219,9 +193,9 @@ const Simplified = () => {
                         </div>
                     </nav>
                 </div>
-            </div> */}
+            </div>
 
-            <div className="row mb-5 mt-5">
+            <div className="row mb-5">
                 <div className="col-12">
                     <div className='row gx-4 gy-4'>
 
